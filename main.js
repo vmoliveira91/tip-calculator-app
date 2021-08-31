@@ -31,7 +31,8 @@ const labelTotalPerPerson = document.querySelector('[data-js="totalPerPerson"]')
 const tipSelected = (event, tip) => {
   const button = event.target
 
-  button.classList.toggle('tipButtonSelected')
+  if(tip !== '[data-js="tipCustom"]')
+    button.classList.toggle('tipButtonSelected')
 
   switch(tip) {
     case '[data-js="tip5"]':
@@ -49,12 +50,15 @@ const tipSelected = (event, tip) => {
     case '[data-js="tip50"]':
       bill.tip = 0.5
       break
+    case '[data-js="tipCustom"]':
+      bill.tip = Number(event.target.value)
+      break
   }
 
   const otherTipButtons = tipButtons.filter((button) => button !== tip)
 
   otherTipButtons.forEach((name) => {
-    const bt= document.querySelector(name)
+    const bt = document.querySelector(name)
     bt.classList.remove('tipButtonSelected')
   })
 }
@@ -64,20 +68,47 @@ tip10.addEventListener('click', (event) => tipSelected(event, '[data-js="tip10"]
 tip15.addEventListener('click', (event) => tipSelected(event, '[data-js="tip15"]'))
 tip25.addEventListener('click', (event) => tipSelected(event, '[data-js="tip25"]'))
 tip50.addEventListener('click', (event) => tipSelected(event, '[data-js="tip50"]'))
+tipCustom.addEventListener('input', (event) => tipSelected(event, '[data-js="tipCustom"]'))
 
 numberPerson.addEventListener('input', (event) => {
+  const value = event.target.value
+  const exists = document.querySelector('[data-js="zero-value"]')
+
+  if(value === '') {
+    event.target.setCustomValidity('')    
+
+    if(exists)
+      exists.remove()
+
+  } else if(Number(value) === 0) {
+    event.target.setCustomValidity('Invalid')
+
+    if(!exists) {
+      const span = event.target.parentElement
+      const article = span.parentElement
+
+      const label = document.createElement('label')
+      label.textContent = 'Can\'t be zero'
+      label.setAttribute('data-js', 'zero-value')
+      label.classList.add('zero')
+
+      article.insertBefore(label, span)
+    }
+
+  } else {
+    event.target.setCustomValidity('')
+
     bill.value = Number(billValue.value)
     bill.numberOfPeople = Number(event.target.value)
-    
+      
     const tipPerPerson = (bill.value * bill.tip) / bill.numberOfPeople
     const totalPerPerson = (bill.value / bill.numberOfPeople) + tipPerPerson
 
     labelTipPerPerson.textContent = `$${tipPerPerson.toFixed(2)}`
     labelTotalPerPerson.textContent = `$${totalPerPerson.toFixed(2)}`
 
-    
     resetButton.classList.add('resetActive')
-    resetButton.removeAttribute('disabled')
+  }
 })
 
 resetButton.addEventListener('click', () => {
@@ -93,8 +124,13 @@ resetButton.addEventListener('click', () => {
 
   billValue.value = ''
   numberPerson.value = ''
+  numberPerson.setCustomValidity('')
   labelTipPerPerson.textContent = '$0.00'
   labelTotalPerPerson.textContent = '$0.00'
   resetButton.classList.remove('resetActive')
-  resetButton.disabled = true
+
+  const exists = document.querySelector('[data-js="zero-value"]')
+
+  if(exists)
+      exists.remove()
 })

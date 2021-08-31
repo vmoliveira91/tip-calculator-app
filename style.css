@@ -19,6 +19,7 @@ main {
 
     width: 800px;
     padding: 20px;
+    margin-top: 50px;
 
     border-radius: 25px;
 
@@ -94,8 +95,6 @@ nav > input {
     width: 110px;
 
     box-sizing: border-box;
-
-    text-align: center;
 }
 
 .input-container {
@@ -147,6 +146,22 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+input:focus {
+    outline: none;
+    border: 2px solid #a0e7df;
+}
+
+input[data-js="person-number"]:invalid {
+    outline: none;
+    border: 2px solid orange;
+}
+
+.zero {
+    color: orange;
+
+    margin-left: 88px;
 }
 
 .column-2 {
@@ -205,6 +220,10 @@ input::-webkit-inner-spin-button {
     font-weight: 700;
 
     cursor: pointer;
+}
+
+.column-2 > button:hover {
+    background-color: #a0e7df;
 }
 
 .resetActive {
